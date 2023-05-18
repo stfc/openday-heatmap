@@ -13,3 +13,6 @@ TBD
 ## Contribution
 TBD
 
+## Manifest
+* QR_codes folder contains the prototype QR code generating Python scripts.
+* documentation folder contains supporting information from STFC.
