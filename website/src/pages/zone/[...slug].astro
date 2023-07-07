@@ -1,0 +1,67 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+import ZoneInfo from "../../layouts/ZoneInfo.astro";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("zone");
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<"zone">;
+
+const post = Astro.props;
+const { Content } = await post.render();
+const hasNickname = Astro.cookies.has("nickname");
+
+// Check if a cookie has been set
+// if so:
+//  Continue (or make sure it has been set in the database)
+// if not:
+//	Bring up modal prompting the person to add a username
+//  Send nickname to API
+if (Astro.request.method === "POST") {
+	try {
+		const data = await Astro.request.formData();
+		const nickname = data.get("nickname");
+		if (!nickname) {
+			// TODO: Add error messages to input
+			console.error("Nickname is missing");
+			return;
+		}
+
+		Astro.cookies.set("nickname", nickname.toString(), { httpOnly: true });
+	} catch (err) {
+		console.log(err);
+	}
+}
+---
+
+{
+	!hasNickname && (
+		<div class="fixed left-0 top-0 w-screen h-screen backdrop-blur grid place-items-center">
+			<div class="bg-white p-10">
+				<form method="post" class="content-between">
+					<label class="block">
+						<span class="block text-sm font-medium">Nickname:</span>
+						<input
+							type="text"
+							id="nickname"
+							name="nickname"
+							class="block border border-slate-300 rounded-md shadow-sm mt-1 focus:ring-1"
+							required
+						/>
+					</label>
+					<button type="submit" class="text-lg rounded bg-blue-100 p-2">
+						Submit
+					</button>
+				</form>
+			</div>
+		</div>
+	)
+}
+
+<ZoneInfo {...post.data}>
+	<Content />
+</ZoneInfo>
