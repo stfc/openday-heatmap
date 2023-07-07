@@ -13,7 +13,6 @@ type Props = CollectionEntry<"zone">;
 
 const post = Astro.props;
 const { Content } = await post.render();
-const hasNickname = Astro.cookies.has("nickname");
 
 // Check if a cookie has been set
 // if so:
@@ -36,6 +35,8 @@ if (Astro.request.method === "POST") {
 		console.log(err);
 	}
 }
+
+const hasNickname = Astro.cookies.has("nickname");
 ---
 
 {
