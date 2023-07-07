@@ -33,7 +33,7 @@ const posts = zoneCollection.sort(
 						posts.map((post) => (
 							<li class="flex">
 								<FormattedDate date={post.data.pubDate} />
-								<a href={`/zone/${post.slug}/`}>{post.data.title}</a>
+								<a href={`/zone/${post.slug}`}>{post.data.title}</a>
 							</li>
 						))
 					}
