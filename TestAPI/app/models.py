@@ -5,12 +5,20 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base  = declarative_base()
-
+metadata = Base.metadata
 
 class User(Base):
     __tablename__ = "user"
 
     UserID = Column(String, primary_key=True)
+
+class Username(Base):
+    __tablename__ = "username"
+
+    username = Column(String, primary_key=True)
+    UserID = Column(String, ForeignKey("user.UserID"))
+
+    User = relationship("User")
 
 
 class Location(Base):
@@ -38,3 +46,6 @@ class Tracking(Base):
 
     User = relationship("User")
     QR = relationship("QR")
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
