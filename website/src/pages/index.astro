@@ -3,8 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
-import { Image } from "@astrojs/image/components";
-import labMap from "../assets/map-final.jpg";
+import labMap from "../assets/map-final.png";
 ---
 
 <!DOCTYPE html>
@@ -15,8 +14,8 @@ import labMap from "../assets/map-final.jpg";
 	<body class="flex flex-col h-screen">
 		<Header title={SITE_TITLE} />
 		<main class="pl-10 pr-10">
-			<div class="m-32 mt-5 mb-5">
-				<h1 class="text-xl font-bold">📍Daresbury Heatmap</h1>
+			<div class="sm:m-32 sm:mt-5 sm:mb-5">
+				<h1 class="text-xl font-bold">📍Daresbury Map</h1>
 				<p>
 					Welcome to the official <a href="https://astro.build/">Astro</a> blog starter
 					template. This template serves as a lightweight, minimally-styled starting
@@ -24,18 +23,12 @@ import labMap from "../assets/map-final.jpg";
 					with Astro.
 				</p>
 			</div>
-			<div class="flex gap-4 m-auto">
-				<Image
-					src={labMap}
+
+				<img
+					src={labMap.src}
 					alt="A cartoon map of Daresbury Lab"
-					class="w-4/6"
+					class="w-5/6 m-auto"
 				/>
-				<!-- Side bar with options -->
-				<div class="h-4/6 w-60 border-black">
-					<h1 class="text-lg font-bold">Controls</h1>
-					<form></form>
-				</div>
-			</div>
 		</main>
 		<Footer />
 	</body>

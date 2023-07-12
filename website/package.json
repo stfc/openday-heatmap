@@ -10,7 +10,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/image": "^0.16.9",
     "@astrojs/markdoc": "^0.3.3",
     "@astrojs/mdx": "^0.19.1",
     "@astrojs/node": "^5.3.0",
