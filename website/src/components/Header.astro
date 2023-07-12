@@ -1,14 +1,13 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import { SITE_TITLE } from "../consts";
-import { Image } from "@astrojs/image/components";
 import logo from "../assets/logo.png";
 ---
 
 <header class="flex mx-2 justify-between p-3 border-b-2 border-b-gray-100 mb-4">
 	<div class="flex h-16">
-		<Image
-			src={logo}
+		<img
+			src={logo.src}
 			alt="Science and Technology Facilities Council"
 			class="w-60"
 		/>
