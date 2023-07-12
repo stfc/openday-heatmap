@@ -1,0 +1,23 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import { SITE_TITLE } from "../consts";
+import logo from "../assets/logo.png";
+---
+
+<header class="flex mx-2 justify-between p-3 border-b-2 border-b-gray-100 mb-4">
+	<div class="flex h-16">
+		<img
+			src={logo.src}
+			alt="Science and Technology Facilities Council"
+			class="w-60"
+		/>
+		<h2 class="text-4xl font-bold ml-10 self-center">
+			{SITE_TITLE}
+		</h2>
+	</div>
+	<nav class="self-center pr-5 space-x-5 text-xl">
+		<!-- TODO: Remove navigation for final build -->
+		<HeaderLink href="/">Home</HeaderLink>
+		<HeaderLink href="/zone">Zones</HeaderLink>
+	</nav>
+</header>

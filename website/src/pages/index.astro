@@ -1,0 +1,35 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import labMap from "../assets/map-final.png";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body class="flex flex-col h-screen">
+		<Header title={SITE_TITLE} />
+		<main class="pl-10 pr-10">
+			<div class="sm:m-32 sm:mt-5 sm:mb-5">
+				<h1 class="text-xl font-bold">📍Daresbury Map</h1>
+				<p>
+					Welcome to the official <a href="https://astro.build/">Astro</a> blog starter
+					template. This template serves as a lightweight, minimally-styled starting
+					point for anyone looking to build a personal website, blog, or portfolio
+					with Astro.
+				</p>
+			</div>
+
+				<img
+					src={labMap.src}
+					alt="A cartoon map of Daresbury Lab"
+					class="w-5/6 m-auto"
+				/>
+		</main>
+		<Footer />
+	</body>
+</html>
