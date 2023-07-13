@@ -1,18 +1,16 @@
 # build a schema using pydantic
+from uuid import UUID
+
 from pydantic import BaseModel
 
+
 class User(BaseModel):
-    UserID: str
+    UserID: UUID
+    Nickname: str
 
     class Config:
         orm_mode = True
 
-class Username(BaseModel):
-    UserID: str
-    Username: str
-
-    class Config:
-        orm_mode = True
 
 class Location(BaseModel):
     LocationID: str
@@ -22,19 +20,21 @@ class Location(BaseModel):
     class Config:
         orm_mode = True
 
+
 class QR(BaseModel):
-    QRID: str
+    QRID: int
     LocationID: str
 
     class Config:
         orm_mode = True
 
+
 class Tracking(BaseModel):
-    UserID: str
-    QRID: str
+    UserID: UUID
+    QRID: int
 
     class Config:
         orm_mode = True
 
     def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
