@@ -6,11 +6,9 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import EmojiFeedback from "../components/EmojiFeedback";
 
-type Props = CollectionEntry<"zone">["data"];
+type Props = CollectionEntry<"zone">["data"] & {userID: string };
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
-
-const nickname = Astro.cookies.get("nickname").value!;
+const { title, description, pubDate, updatedDate, heroImage, userID } = Astro.props;
 ---
 
 <html lang="en">
@@ -48,7 +46,7 @@ const nickname = Astro.cookies.get("nickname").value!;
 				<div class="prose lg:prose-xl prose-headings:mb-0 prose-headings:mt-2">
 					<slot />
 				</div>
-				<EmojiFeedback zoneName={title} nickname={nickname} client:load />
+				<EmojiFeedback zoneName={title} userID={userID} client:load />
 			</article>
 		</main>
 		<Footer />

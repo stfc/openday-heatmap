@@ -7,10 +7,12 @@ from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import text
 
 from app.models import QR as ModelQR
+from app.models import Feedback as ModelFeedback
 from app.models import Location as ModelLocation
 from app.models import Tracking as ModelTracking
 from app.models import User as ModelUser
 from app.schema import QR as SchemaQR
+from app.schema import FeedbackRequest
 from app.schema import Location as SchemaLocation
 from app.schema import Tracking as SchemaTracking
 from app.schema import User as SchemaUser
@@ -60,15 +62,15 @@ async def find_user_by_nickname(nickname: str):
     raise HTTPException(status_code=404, detail="User not found")
 
 
-@app.get("/users/{userID}", response_model=SchemaUser, tags=["Users"])
-async def get_user(userID: uuid.UUID):
+@app.get("/users/{user_id}", response_model=SchemaUser, tags=["Users"])
+async def get_user(user_id: uuid.UUID):
     """
     Find a specific user using their user ID.
 
     Will return 404 if a user isn't found.
     """
     if user := (
-        db.session.query(ModelUser).filter(ModelUser.UserID == userID).one_or_none()
+        db.session.query(ModelUser).filter(ModelUser.UserID == user_id).one_or_none()
     ):
         return user
 
@@ -78,6 +80,21 @@ async def get_user(userID: uuid.UUID):
 @app.get("/user/get", response_model=list[SchemaUser], tags=["Users"])
 async def get_users():
     return db.session.query(ModelUser).all()
+
+
+@app.post("/users/{user_id}/feedback", tags=["Users"])
+async def set_feedback(user_id: uuid.UUID, feedback: FeedbackRequest):
+    """Set feedback for a specific user."""
+    db_feedback = ModelFeedback(
+        QRID=feedback.QRID,
+        UserID=user_id,
+        EmojiRating=feedback.EmojiRating,
+        Thoughts=feedback.Thoughts,
+        Improvements=feedback.Improvements,
+    )
+    db.session.add(db_feedback)
+    db.session.commit()
+    return db_feedback
 
 
 # Add a new Location

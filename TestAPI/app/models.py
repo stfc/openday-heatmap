@@ -23,6 +23,21 @@ class Location(Base):
     URL = Column(String)
 
 
+class Feedback(Base):
+    __tablename__ = "Feedback"
+
+    FeedbackID = Column(Integer, primary_key=True)
+    # Use QRID for feedback to avoid an unnecessary API call to find the location ID 
+    QRID = Column(Integer, ForeignKey("QR.QRID"))
+    UserID = Column(UUID, ForeignKey("User.UserID"))
+    EmojiRating = Column(String, nullable=False)  # TODO: Could be an enum
+    Thoughts = Column(String, nullable=False)  # What you thought was good?
+    Improvements = Column(String, nullable=False)  # What you would improve
+
+    Location = relationship("QR")
+    User = relationship("User")
+
+
 class QR(Base):
     __tablename__ = "QR"
 

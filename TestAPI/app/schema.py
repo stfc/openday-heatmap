@@ -16,6 +16,13 @@ class User(UserRequest):
         orm_mode = True
 
 
+class FeedbackRequest(BaseModel):
+    QRID: int
+    EmojiRating: str
+    Thoughts: str
+    Improvements: str
+
+
 class Location(BaseModel):
     LocationID: str
     name: str

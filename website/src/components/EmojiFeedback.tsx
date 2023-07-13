@@ -2,10 +2,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 type EmojiFeedbackProps = {
   zoneName: string;
-  nickname: string;
+  userID: string;
 };
 
-export default function({ zoneName, nickname }: EmojiFeedbackProps) {
+export default function({ zoneName, userID }: EmojiFeedbackProps) {
   type Option = { label: string; value: string };
 
   // TODO: Could swap this to ZOD. Just need to set the resolver in useForm
@@ -29,7 +29,7 @@ export default function({ zoneName, nickname }: EmojiFeedbackProps) {
     formState: { errors },
   } = useForm<Inputs>();
   // TODO: Plug this into API
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(`${nickname} gave this feedback: `, data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(`${userID} gave this feedback: `, data);
 
   if (errors) {
     console.log("Errors: ", errors);
