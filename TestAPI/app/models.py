@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "User"
 
     UserID = Column(UUID, primary_key=True)
-    Nickname = Column(String)
+    Nickname = Column(String, unique=True, nullable=False)
 
 
 class Location(Base):

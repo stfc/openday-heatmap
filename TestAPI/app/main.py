@@ -2,7 +2,7 @@ import random
 import uuid
 from datetime import datetime, timedelta
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import text
 
@@ -14,6 +14,7 @@ from app.schema import QR as SchemaQR
 from app.schema import Location as SchemaLocation
 from app.schema import Tracking as SchemaTracking
 from app.schema import User as SchemaUser
+from app.schema import UserRequest
 
 app = FastAPI()
 
@@ -35,20 +36,32 @@ def read_item(item_id: int):
     return {"item_id": item_id}
 
 
-# Add a new user
-# Requires:
-# "UserID" = UUID (for now just using int)
-# Example: {"UserID":"1"}
-@app.post("/user/add", response_model=SchemaUser)
-async def add_user(user: SchemaUser):
-    db_User = ModelUser(UserID=user.UserID)
+@app.post("/user/add", response_model=SchemaUser, tags=["Users"])
+async def add_user(user: UserRequest):
+    """Add a new user."""
+    db_User = ModelUser(UserID=uuid.uuid4(), Nickname=user.Nickname)
     db.session.add(db_User)
     db.session.commit()
     return db_User
 
 
-@app.get("/user/get")
-async def get_user():
+@app.get("/users", response_model=SchemaUser, tags=["Users"])
+async def find_user(nickname: str):
+    """
+    Find a specific user.
+
+    Will return 404 if a user isn't found.
+    """
+    if user := (
+        db.session.query(ModelUser).filter(ModelUser.Nickname == nickname).one_or_none()
+    ):
+        return user
+
+    raise HTTPException(status_code=404, detail="User not found")
+
+
+@app.get("/user/get", response_model=list[SchemaUser], tags=["Users"])
+async def get_users():
     return db.session.query(ModelUser).all()
 
 
@@ -58,7 +71,7 @@ async def get_user():
 # "name" = string, the location name
 # "URL" = the URL of the website for the location
 # Example: {"LocationID":"1", "name":"Hartree Centre", "URL":"www.nowebsiteyet.com/hartree"}
-@app.post("/location/add", response_model=SchemaLocation)
+@app.post("/location/add", response_model=SchemaLocation, tags=["Locations"])
 async def add_location(Location: SchemaLocation):
     db_Location = ModelLocation(
         LocationID=Location.LocationID,
@@ -70,7 +83,7 @@ async def add_location(Location: SchemaLocation):
     return db_Location
 
 
-@app.get("/location/get")
+@app.get("/location/get", tags=["Locations"])
 async def get_location():
     return db.session.query(ModelLocation).all()
 
@@ -80,7 +93,7 @@ async def get_location():
 # "QRID" = UUID (for now just using int)
 # "LocationID" = UUID, foreignkey for the location
 # Example: {"QRID":"1", "LocationID":"1"}
-@app.post("/qr/add", response_model=SchemaQR)
+@app.post("/qr/add", response_model=SchemaQR, tags=["QR"])
 async def add_qr(QR: SchemaQR):
     db_QR = ModelQR(QRID=QR.QRID, LocationID=QR.LocationID)
     db.session.add(db_QR)
@@ -88,7 +101,7 @@ async def add_qr(QR: SchemaQR):
     return db_QR
 
 
-@app.get("/qr/get")
+@app.get("/qr/get", tags=["QR"])
 async def get_qr():
     QR = db.session.query(ModelQR).all()
 
@@ -103,7 +116,7 @@ async def get_qr():
 # "QRID" = UUID, foreignkey for the location
 # "Timestamp" = DateTime, DateTime of tracking event
 # Example: {"UserID":"1", "QRID":"1"}
-@app.post("/tracking/add", response_model=SchemaTracking)
+@app.post("/tracking/add", response_model=SchemaTracking, tags=["Tracking"])
 async def add_tracking(Tracking: SchemaTracking):
     user = db.session.query(ModelUser).filter_by(UserID=Tracking.UserID).first()
 
@@ -123,7 +136,7 @@ async def add_tracking(Tracking: SchemaTracking):
 
 
 # random.randint(1, 30)
-@app.get("/tracking/random")
+@app.get("/tracking/random", tags=["Tracking"])
 async def add_random_tracking():
     db_Tracking = ModelTracking(
         TrackingID=str(uuid.uuid4()),
@@ -135,13 +148,13 @@ async def add_random_tracking():
     return db_Tracking.QRID
 
 
-@app.get("/tracking/get")
+@app.get("/tracking/get", tags=["Tracking"])
 async def get_tracking():
     QR = db.session.query(ModelTracking).all()
     return QR
 
 
-@app.get("/tracking/get1day")
+@app.get("/tracking/get1day", tags=["Tracking"])
 async def get_same_day_tracking():
     one_day_interval_before = datetime.utcnow() - timedelta(seconds=1)
     print(one_day_interval_before)
@@ -174,7 +187,7 @@ async def get_same_day_tracking():
     return QR
 
 
-@app.get("/tracking/getpast")
+@app.get("/tracking/getpast", tags=["Tracking"])
 async def get_past_tracking():
     one_day_interval_before = datetime.utcnow() - timedelta(hours=12)
     print(one_day_interval_before)
@@ -208,7 +221,7 @@ async def get_past_tracking():
 
 
 # Example: {"UserID":"1"}
-@app.post("/tracking/onefulluser")
+@app.post("/tracking/onefulluser", tags=["Tracking"])
 async def get_user_tracking(Tracking: SchemaUser):
     FullHistory = (
         db.session.query(ModelTracking).filter_by(UserID=Tracking.UserID).all()

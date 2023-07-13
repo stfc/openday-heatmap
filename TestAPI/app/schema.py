@@ -4,9 +4,13 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class User(BaseModel):
-    UserID: UUID
+class UserRequest(BaseModel):
+    # Separated into UserRequest as we only want the nickname
     Nickname: str
+
+
+class User(UserRequest):
+    UserID: UUID
 
     class Config:
         orm_mode = True
