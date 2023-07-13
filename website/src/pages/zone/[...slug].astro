@@ -1,68 +1,102 @@
 ---
-import { CollectionEntry, getCollection } from "astro:content";
+import { getEntry } from "astro:content";
 import ZoneInfo from "../../layouts/ZoneInfo.astro";
+import {
+	adjectives,
+	animals,
+	colors,
+	uniqueNamesGenerator,
+} from "unique-names-generator";
 
-export async function getStaticPaths() {
-	const posts = await getCollection("zone");
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
-	}));
+const { slug } = Astro.params;
+if (slug === undefined) {
+	throw new Error("Slug is required");
 }
-type Props = CollectionEntry<"zone">;
 
-const post = Astro.props;
-const { Content } = await post.render();
+const entry = await getEntry("zone", slug);
+if (entry === undefined) {
+	return Astro.redirect("/404");
+}
+
+const { Content } = await entry.render();
+
+
+////////////////////////////
 
 // Check if a cookie has been set
 // if so:
 //  Continue (or make sure it has been set in the database)
 // if not:
-//	Bring up modal prompting the person to add a username
-//  Send nickname to API
-if (Astro.request.method === "POST") {
-	try {
-		const data = await Astro.request.formData();
-		const nickname = data.get("nickname");
-		if (!nickname) {
-			// TODO: Add error messages to input
-			console.error("Nickname is missing");
-			return;
-		}
+//	Create a unique random nickname
+//  Send nickname to API and store UUID received in userID cookie
 
-		Astro.cookies.set("nickname", nickname.toString(), { httpOnly: true });
-	} catch (err) {
-		console.log(err);
-	}
+let userID = Astro.cookies.get("userID").value;
+if (userID === undefined) {
+	userID = await createUser();
+	if (userID === undefined) return;
+	Astro.cookies.set("userID", userID, {
+		path: "/", // Need to make sure it's set to the root path
+	});
 }
 
-const hasNickname = Astro.cookies.has("nickname");
+// Don't like this :(
+const nickname = await fetchName(userID);
+
+// Returns UserID
+async function createUser(): Promise<string> {
+	const randomUserName = uniqueNamesGenerator({
+		dictionaries: [colors, adjectives, animals],
+		separator: "-",
+	});
+
+	const response = await fetch(`${import.meta.env.HEATMAP_API_URL}/users`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ Nickname: randomUserName }),
+	});
+
+	const { UserID: id }: { UserID: string } = await response.json();
+	return id;
+}
+
+async function fetchName(userID: string): Promise<string> {
+	const response = await fetch(
+		`${import.meta.env.HEATMAP_API_URL}/users/${userID}`
+	);
+
+	const { Nickname: nickname }: { Nickname: string } = await response.json();
+	return nickname;
+}
+
+////////////////////////////
+
+// Null is converted to 0
+const qrID = Number(Astro.url.searchParams.get("qrid"));
+if (!isNaN(qrID) && qrID != 0) {
+	console.log(qrID);
+	await addTracking(qrID, userID);
+}
+
+async function addTracking(qrID: number, userID: string) {
+	const response = await fetch(
+		`${import.meta.env.HEATMAP_API_URL}/tracking/add`,
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ UserID: userID, QRID: qrID }),
+		}
+	);
+
+	console.log(await response.json());
+}
 ---
 
-{
-	!hasNickname && (
-		<div class="fixed left-0 top-0 w-screen h-screen backdrop-blur grid place-items-center">
-			<div class="bg-white p-10">
-				<form method="post" class="content-between">
-					<label class="block">
-						<span class="block text-sm font-medium">Nickname:</span>
-						<input
-							type="text"
-							id="nickname"
-							name="nickname"
-							class="block border border-slate-300 rounded-md shadow-sm mt-1 focus:ring-1"
-							required
-						/>
-					</label>
-					<button type="submit" class="text-lg rounded bg-blue-100 p-2">
-						Submit
-					</button>
-				</form>
-			</div>
-		</div>
-	)
-}
-
-<ZoneInfo {...post.data}>
+<ZoneInfo {...entry.data} userID={userID}>
+	<h1>User ID: {userID}</h1>
+	<h1>Nickname: {nickname}</h1>
 	<Content />
 </ZoneInfo>

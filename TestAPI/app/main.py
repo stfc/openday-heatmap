@@ -36,7 +36,7 @@ def read_item(item_id: int):
     return {"item_id": item_id}
 
 
-@app.post("/user/add", response_model=SchemaUser, tags=["Users"])
+@app.post("/users", response_model=SchemaUser, tags=["Users"])
 async def add_user(user: UserRequest):
     """Add a new user."""
     db_User = ModelUser(UserID=uuid.uuid4(), Nickname=user.Nickname)
@@ -46,14 +46,29 @@ async def add_user(user: UserRequest):
 
 
 @app.get("/users", response_model=SchemaUser, tags=["Users"])
-async def find_user(nickname: str):
+async def find_user_by_nickname(nickname: str):
     """
-    Find a specific user.
+    Find a specific user from a nickname.
 
     Will return 404 if a user isn't found.
     """
     if user := (
         db.session.query(ModelUser).filter(ModelUser.Nickname == nickname).one_or_none()
+    ):
+        return user
+
+    raise HTTPException(status_code=404, detail="User not found")
+
+
+@app.get("/users/{userID}", response_model=SchemaUser, tags=["Users"])
+async def get_user(userID: uuid.UUID):
+    """
+    Find a specific user using their user ID.
+
+    Will return 404 if a user isn't found.
+    """
+    if user := (
+        db.session.query(ModelUser).filter(ModelUser.UserID == userID).one_or_none()
     ):
         return user
 

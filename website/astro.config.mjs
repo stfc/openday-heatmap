@@ -14,7 +14,7 @@ export default defineConfig({
   experimental: {
     assets: true,
   },
-  output: "hybrid",
+  output: "server",
   site: "https://example.com",
   integrations: [mdx(), sitemap(), tailwind(), markdoc(), react()],
   adapter: node({
