@@ -3,9 +3,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 type EmojiFeedbackProps = {
   zoneName: string;
   userID: string;
+  qrID: number;
 };
 
-export default function({ zoneName, userID }: EmojiFeedbackProps) {
+export default function({ zoneName, userID, qrID }: EmojiFeedbackProps) {
   type Option = { label: string; value: string };
 
   // TODO: Could swap this to ZOD. Just need to set the resolver in useForm
@@ -23,17 +24,26 @@ export default function({ zoneName, userID }: EmojiFeedbackProps) {
     { label: "😃", value: "amazing" },
   ];
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
-  // TODO: Plug this into API
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(`${userID} gave this feedback: `, data);
+  const { register, handleSubmit, reset } = useForm<Inputs>();
 
-  if (errors) {
-    console.log("Errors: ", errors);
-  }
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Making the heatmap api request on the serverside
+    await fetch(`/api/feedback/${userID}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        QRID: qrID,
+        EmojiRating: data.emojiFeedback,
+        Thoughts: data.thoughts,
+        Improvements: data.improvements,
+      }),
+    });
+
+    // Reset the form
+    reset();
+  };
 
   return (
     <div className="self-center">

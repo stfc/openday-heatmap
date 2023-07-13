@@ -20,7 +20,6 @@ if (entry === undefined) {
 
 const { Content } = await entry.render();
 
-
 ////////////////////////////
 
 // Check if a cookie has been set
@@ -75,12 +74,12 @@ async function fetchName(userID: string): Promise<string> {
 // Null is converted to 0
 const qrID = Number(Astro.url.searchParams.get("qrid"));
 if (!isNaN(qrID) && qrID != 0) {
-	console.log(qrID);
 	await addTracking(qrID, userID);
 }
 
 async function addTracking(qrID: number, userID: string) {
-	const response = await fetch(
+	// TODO: Add error catching
+	await fetch(
 		`${import.meta.env.HEATMAP_API_URL}/tracking/add`,
 		{
 			method: "POST",
@@ -90,12 +89,10 @@ async function addTracking(qrID: number, userID: string) {
 			body: JSON.stringify({ UserID: userID, QRID: qrID }),
 		}
 	);
-
-	console.log(await response.json());
 }
 ---
 
-<ZoneInfo {...entry.data} userID={userID}>
+<ZoneInfo {...entry.data} userID={userID} qrID={qrID}>
 	<h1>User ID: {userID}</h1>
 	<h1>Nickname: {nickname}</h1>
 	<Content />
