@@ -8,18 +8,6 @@ import {
 	uniqueNamesGenerator,
 } from "unique-names-generator";
 
-const { slug } = Astro.params;
-if (slug === undefined) {
-	throw new Error("Slug is required");
-}
-
-const entry = await getEntry("zone", slug);
-if (entry === undefined) {
-	return Astro.redirect("/404");
-}
-
-const { Content } = await entry.render();
-
 ////////////////////////////
 
 // Check if a cookie has been set
@@ -48,7 +36,10 @@ async function createUser(): Promise<string> {
 		separator: "-",
 	});
 
-	const response = await fetch(`${import.meta.env.HEATMAP_API_URL}/users`, {
+	const url = `${import.meta.env.HEATMAP_API_URL}/users`;
+	console.log(url);
+
+	const response = await fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -72,24 +63,39 @@ async function fetchName(userID: string): Promise<string> {
 ////////////////////////////
 
 // Null is converted to 0
-const qrID = Number(Astro.url.searchParams.get("qrid"));
+const qrID = Number(Astro.url.searchParams.get("qrcode"));
 if (!isNaN(qrID) && qrID != 0) {
 	await addTracking(qrID, userID);
 }
 
 async function addTracking(qrID: number, userID: string) {
 	// TODO: Add error catching
-	await fetch(
-		`${import.meta.env.HEATMAP_API_URL}/tracking/add`,
-		{
+	try {
+		await fetch(`${import.meta.env.HEATMAP_API_URL}/tracking/add`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ UserID: userID, QRID: qrID }),
-		}
-	);
+		});
+	} catch (err) {
+		console.error(err);
+	}
 }
+
+////
+const { slug } = Astro.params;
+console.log(slug);
+if (slug === undefined) {
+	throw new Error("Slug is required");
+}
+
+const entry = await getEntry("zone", slug);
+if (entry === undefined) {
+	return Astro.redirect("/404");
+}
+
+const { Content } = await entry.render();
 ---
 
 <ZoneInfo {...entry.data} userID={userID} qrID={qrID}>

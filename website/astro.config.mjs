@@ -15,7 +15,7 @@ export default defineConfig({
     assets: true,
   },
   output: "server",
-  site: "https://example.com",
+  site: "https://heatmap.hartree.dev",
   integrations: [mdx(), sitemap(), tailwind(), markdoc(), react()],
   adapter: node({
     mode: "standalone",

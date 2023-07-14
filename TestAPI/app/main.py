@@ -6,17 +6,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import text
 
-from app.models import QR as ModelQR
-from app.models import Feedback as ModelFeedback
-from app.models import Location as ModelLocation
-from app.models import Tracking as ModelTracking
-from app.models import User as ModelUser
-from app.schema import QR as SchemaQR
-from app.schema import FeedbackRequest
-from app.schema import Location as SchemaLocation
-from app.schema import Tracking as SchemaTracking
-from app.schema import User as SchemaUser
-from app.schema import UserRequest
+from models import QR as ModelQR
+from models import Feedback as ModelFeedback
+from models import Location as ModelLocation
+from models import Tracking as ModelTracking
+from models import User as ModelUser
+from schema import QR as SchemaQR
+from schema import FeedbackRequest
+from schema import Location as SchemaLocation
+from schema import Tracking as SchemaTracking
+from schema import User as SchemaUser
+from schema import UserRequest
 
 app = FastAPI()
 
