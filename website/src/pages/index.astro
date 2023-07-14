@@ -14,21 +14,33 @@ import labMap from "../assets/map-final.png";
 	<body class="flex flex-col h-screen">
 		<Header title={SITE_TITLE} />
 		<main class="pl-10 pr-10">
-			<div class="sm:m-32 sm:mt-5 sm:mb-5">
-				<h1 class="text-xl font-bold">📍Daresbury Map</h1>
+			<div class="mb-4 sm:m-32 sm:mt-5 sm:mb-5">
+				<h1 class="text-xl font-bold">🗺️ Daresbury Heatmap</h1>
 				<p>
-					Welcome to the official <a href="https://astro.build/">Astro</a> blog starter
-					template. This template serves as a lightweight, minimally-styled starting
-					point for anyone looking to build a personal website, blog, or portfolio
-					with Astro.
+					Welcome to the Daresbury Open Day heatmap website.
+					<br />
+					As you go around today, make sure to scan the QR codes in each zone to
+					find out more information and then come to the Computing zone to retrace
+					your steps!
 				</p>
 			</div>
 
+			<div class="mb-4 sm:m-32 sm:mt-5 sm:mb-5">
+				<h1 class="text-xl font-bold">📍 Daresbury Map</h1>
+				<p>
+					To help with your journey today, we have the official Daresbury
+					Open Day map below. <br />
+					<em>You can either zoom-in or click to download!</em>
+				</p>
+			</div>
+
+			<a href={labMap.src}>
 				<img
 					src={labMap.src}
 					alt="A cartoon map of Daresbury Lab"
-					class="w-5/6 m-auto"
+					class="w-6/6 sm:w-5/6 m-auto"
 				/>
+			</a>
 		</main>
 		<Footer />
 	</body>

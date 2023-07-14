@@ -1,5 +1,5 @@
-
-FROM node:lts AS runtime
+# Docker best practices wasn't working :'(
+FROM node:18.12.1-slim
 WORKDIR /app
 
 # Enable PNPM

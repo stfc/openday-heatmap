@@ -99,7 +99,6 @@ const { Content } = await entry.render();
 ---
 
 <ZoneInfo {...entry.data} userID={userID} qrID={qrID}>
-	<h1>User ID: {userID}</h1>
-	<h1>Nickname: {nickname}</h1>
 	<Content />
+	<p><em>Use this nickname to trace your steps: <b>{nickname}</b></em></p>
 </ZoneInfo>

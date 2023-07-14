@@ -46,11 +46,14 @@ export default function({ zoneName, userID, qrID }: EmojiFeedbackProps) {
   };
 
   return (
-    <div className="self-center">
-      <h1 className="text-3xl font-bold">Tell us how we did!</h1>
+    <div className="mt-4 ml-4 mr-4 sm:self-center">
+      <hr />
+
+      <h1 className="mt-4 text-2xl sm:text-3xl font-bold">Tell us how we did!</h1>
+
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="text-8xl select-none pt-5 pb-5">
-          <ul className="inline-flex w-4/5 justify-between">
+        <div className="text-6xl sm:text-8xl select-none pt-5 pb-5">
+          <ul className="inline-flex w-full sm:w-4/5 justify-between">
             {OPTIONS.map((option) => (
               <li key={option.value}>
                 <input
@@ -73,7 +76,7 @@ export default function({ zoneName, userID, qrID }: EmojiFeedbackProps) {
         </div>
 
         <div className="pb-5">
-          <label htmlFor="thoughts" className="font-bold">
+          <label htmlFor="thoughts" className="">
             Please let us know what you thought was good about {zoneName}:
           </label>
           <input
@@ -85,7 +88,7 @@ export default function({ zoneName, userID, qrID }: EmojiFeedbackProps) {
         </div>
 
         <div className="pb-5">
-          <label htmlFor="improvements" className="font-bold">
+          <label htmlFor="improvements" className="">
             Please let us know what you thought could have improved {zoneName}:
           </label>
           <input

@@ -9,15 +9,13 @@ import logo from "../assets/logo.png";
 		<img
 			src={logo.src}
 			alt="Science and Technology Facilities Council"
-			class="w-60"
+			class="w-52"
 		/>
-		<h2 class="text-4xl font-bold ml-10 self-center">
+		<h2 class="hidden sm:block text-4xl font-bold ml-10 self-center">
 			{SITE_TITLE}
 		</h2>
 	</div>
-	<nav class="self-center pr-5 space-x-5 text-xl">
-		<!-- TODO: Remove navigation for final build -->
-		<HeaderLink href="/">Home</HeaderLink>
+	<nav class="right-0 self-center text-xl">
 		<HeaderLink href="/zone">Zones</HeaderLink>
 	</nav>
 </header>
